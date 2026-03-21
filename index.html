@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>clock</title>
@@ -51,11 +52,7 @@ body {
 </div>
 <script>
 var DAYS = ['일','월','화','수','목','금','토'];
-var angle = 0;
-var last = 0;
-
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
-
 function tick() {
   var t = new Date();
   document.getElementById('hh').textContent = pad(t.getHours());
@@ -64,30 +61,20 @@ function tick() {
     t.getFullYear() + '년 ' + (t.getMonth() + 1) + '월 ' +
     t.getDate() + '일 (' + DAYS[t.getDay()] + ')';
 }
-
 function initWrap() {
   var wrap = document.getElementById('wrap');
   wrap.style.width  = window.innerWidth  + 'px';
   wrap.style.height = window.innerHeight + 'px';
 }
-
-function frame(now) {
-  if (last === 0) last = now;
-  var delta = now - last;
-  last = now;
-  angle += (delta / 1000) * 6;
+function frame() {
+  var t = new Date();
+  var sec = t.getSeconds() + t.getMilliseconds() / 1000;
+  var angle = sec * 6;
   var wrap = document.getElementById('wrap');
-  if (angle >= 360) {
-    angle = 0;
-    wrap.style.webkitTransform = 'rotate(0deg)';
-    wrap.style.transform = 'rotate(0deg)';
-  } else {
-    wrap.style.webkitTransform = 'rotate(' + angle + 'deg)';
-    wrap.style.transform = 'rotate(' + angle + 'deg)';
-  }
+  wrap.style.webkitTransform = 'rotate(' + angle + 'deg)';
+  wrap.style.transform       = 'rotate(' + angle + 'deg)';
   requestAnimationFrame(frame);
 }
-
 initWrap();
 tick();
 setInterval(tick, 1000);
