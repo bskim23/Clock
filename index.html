@@ -8,12 +8,11 @@
 <title>clock</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow:hidden; }
+html, body { width:100%; height:100%; background:#000; overflow:hidden; }
 body {
   display:-webkit-flex; display:flex;
   -webkit-align-items:center; align-items:center;
   -webkit-justify-content:center; justify-content:center;
-  background:#000;
 }
 #wrap {
   display:-webkit-flex; display:flex;
@@ -26,7 +25,6 @@ body {
 #time {
   font-family:Courier,monospace;
   font-size:22vw;
-  color:#888;
   line-height:1;
   white-space:nowrap;
 }
@@ -39,7 +37,6 @@ body {
 #date {
   font-family:Courier,monospace;
   font-size:3.5vw;
-  color:#444;
   margin-top:8px;
   letter-spacing:2px;
   white-space:nowrap;
@@ -53,9 +50,28 @@ body {
 </div>
 <script>
 var DAYS = ['일','월','화','수','목','금','토'];
-var lastInvert = -1;
+var COLORS = [
+  '#ffffff', '#aaaaaa', '#ff6b6b', '#ff9f43',
+  '#ffd32a', '#0be881', '#67e5ad', '#48dbfb',
+  '#54a0ff', '#a29bfe', '#fd79a8', '#fab1d3'
+];
+var lastColorIdx = -1;
+var lastMinute = -1;
 
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+function pickColor() {
+  var idx;
+  do { idx = Math.floor(Math.random() * COLORS.length); }
+  while (idx === lastColorIdx);
+  lastColorIdx = idx;
+  return COLORS[idx];
+}
+
+function applyColor(c) {
+  document.getElementById('time').style.color = c;
+  document.getElementById('date').style.color = c;
+}
 
 function tick() {
   var t = new Date();
@@ -65,19 +81,9 @@ function tick() {
   document.getElementById('date').textContent =
     t.getFullYear() + '년 ' + (t.getMonth() + 1) + '월 ' +
     t.getDate() + '일 (' + DAYS[t.getDay()] + ')';
-
-  var invert = Math.floor(m / 5) % 2;
-  if (invert !== lastInvert) {
-    lastInvert = invert;
-    if (invert === 0) {
-      document.body.style.background = '#000';
-      document.getElementById('time').style.color = '#888';
-      document.getElementById('date').style.color = '#444';
-    } else {
-      document.body.style.background = '#fff';
-      document.getElementById('time').style.color = '#333';
-      document.getElementById('date').style.color = '#999';
-    }
+  if (m !== lastMinute) {
+    lastMinute = m;
+    applyColor(pickColor());
   }
 }
 
@@ -97,6 +103,7 @@ function frame() {
 }
 
 initWrap();
+applyColor(pickColor());
 tick();
 setInterval(tick, 1000);
 requestAnimationFrame(frame);
