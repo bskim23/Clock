@@ -28,12 +28,7 @@ body {
   line-height:1;
   white-space:nowrap;
 }
-#colon {
-  -webkit-animation:blink 1s step-end infinite;
-  animation:blink 1s step-end infinite;
-}
-@-webkit-keyframes blink { 50% { opacity:0.1; } }
-@keyframes blink         { 50% { opacity:0.1; } }
+#colon { opacity:1; }
 #date {
   font-family:Courier,monospace;
   font-size:3.5vw;
@@ -51,11 +46,20 @@ body {
 <script>
 var DAYS = ['일','월','화','수','목','금','토'];
 var COLORS = [
-  '#ffffff', '#aaaaaa', '#ff6b6b', '#ff9f43',
-  '#ffd32a', '#0be881', '#67e5ad', '#48dbfb',
-  '#54a0ff', '#a29bfe', '#fd79a8', '#fab1d3'
+  '#ffffff','#aaaaaa','#ff6b6b','#ff9f43',
+  '#ffd32a','#0be881','#67e5ad','#48dbfb',
+  '#54a0ff','#a29bfe','#fd79a8','#fab1d3'
+];
+var SYMS = [
+  '!','@','#','$','%','^','&','*','?','~',
+  '+','-','=','|','/','\\','<','>','[',']',
+  '{','}','(',')','_','§','¶','†','‡','•',
+  '★','☆','♠','♣','♥','♦','©','®','™','✓',
+  '∞','≈','≠','±','×','÷','∑','√','∂','∆',
+  'Ω','μ','π','Φ','Ψ','λ','ξ','η','θ','ε'
 ];
 var lastColorIdx = -1;
+var lastSymIdx = -1;
 var lastMinute = -1;
 
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
@@ -71,6 +75,14 @@ function pickColor() {
 function applyColor(c) {
   document.getElementById('time').style.color = c;
   document.getElementById('date').style.color = c;
+}
+
+function tickSym() {
+  var idx;
+  do { idx = Math.floor(Math.random() * SYMS.length); }
+  while (idx === lastSymIdx);
+  lastSymIdx = idx;
+  document.getElementById('colon').textContent = SYMS[idx];
 }
 
 function tick() {
@@ -104,8 +116,10 @@ function frame() {
 
 initWrap();
 applyColor(pickColor());
+tickSym();
 tick();
 setInterval(tick, 1000);
+setInterval(tickSym, 1000);
 requestAnimationFrame(frame);
 </script>
 </body>
