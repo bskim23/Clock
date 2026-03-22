@@ -1,5 +1,3 @@
-전체 코드예요:
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,10 +21,9 @@ body {
   font-family:Courier,monospace;
   font-size:3vw;
   letter-spacing:2px;
-  padding:10px 0 6px;
+  padding:20px 0 6px;
   min-height:5vw;
   white-space:nowrap;
-  color:#fff;
 }
 #hs { color:#fff; }
 #hv { color:#fff; }
@@ -98,7 +95,7 @@ var S_LIST = [
   'The surgeon','My agent','The captain','My intern','The librarian',
   'My plumber','The firefighter','My dentist','The barber','The mechanic',
   'My editor','The warden','My broker','The ambassador','My bodyguard',
-  'The janitor','My critic','The preacher','My ancestor','The witness'
+  'My critic','The preacher','My ancestor','The witness','The philosopher'
 ];
 var V_LIST = [
   'loves','hates','needs','wants','finds',
@@ -119,10 +116,10 @@ var V_LIST = [
   'covers','damages','defends','denies','drives',
   'escapes','follows','forgets','guards','hunts',
   'invades','joins','judges','knows','manages',
-  'marks','nurses','orders','owns','protects',
-  'questions','raises','rejects','replaces','reports',
-  'rules','searches','serves','shapes','shares',
-  'shelters','shoots','silences','survives','trains'
+  'marks','nurses','orders','protects','questions',
+  'raises','rejects','replaces','reports','rules',
+  'searches','serves','shapes','shares','shelters',
+  'shoots','silences','survives','trains','worships'
 ];
 var O_LIST = [
   'a book','a phone','a key','a bag','a chair',
@@ -144,7 +141,8 @@ var O_LIST = [
   'death','life','time','chaos','order',
   'faith','doubt','shame','pride','guilt',
   'peace','war','knowledge','darkness','light',
-  'a wound','a laugh','a tear','a name','a voice'
+  'a wound','a laugh','a tear','a name','a voice',
+  'a scar','a debt','a promise','a grave','a throne'
 ];
 
 var lastColorIdx = -1;
@@ -225,6 +223,3 @@ requestAnimationFrame(frame);
 </script>
 </body>
 </html>
-
-
-S/V/O 각 100개, 2초마다 세 슬롯 동시 갱신, 헤더 텍스트 흰색 고정이에요.​​​​​​​​​​​​​​​​
