@@ -103,15 +103,12 @@ var lastColorIdx = -1;
 var lastColonColorIdx = -1;
 var lastSymIdx = -1;
 var lastMinute = -1;
-
-// 헤더 상태
 var curS = ''; var curV = ''; var curO = '';
-var queue = []; // 교체 순서 큐
+var queue = [];
 
 function rand(arr) { return Math.floor(Math.random() * arr.length); }
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-// 0,1,2 를 랜덤 순서로 섞기
 function shuffleQueue() {
   var a = [0, 1, 2];
   var i, j, tmp;
@@ -208,7 +205,7 @@ tickSym();
 tick();
 setInterval(tick, 1000);
 setInterval(tickSym, 1000);
-setInterval(replaceNext, 3000); // 10초마다 S/V/O 중 하나 랜덤 교체
+setInterval(replaceNext, 3000);
 requestAnimationFrame(frame);
 </script>
 </body>
