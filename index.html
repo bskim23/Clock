@@ -1,3 +1,6 @@
+S→V→O 순서는 고정, 각각 3초 간격으로 랜덤 교체. 9초에 한 바퀴예요.
+shuffleQueue 관련 코드 전부 제거하고 아래로 교체하면 돼요. 전체 코드예요:
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -103,45 +106,27 @@ var lastColorIdx = -1;
 var lastColonColorIdx = -1;
 var lastSymIdx = -1;
 var lastMinute = -1;
-var curS = ''; var curV = ''; var curO = '';
-var queue = [];
+var step = 0; // 0=S, 1=V, 2=O
 
 function rand(arr) { return Math.floor(Math.random() * arr.length); }
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-function shuffleQueue() {
-  var a = [0, 1, 2];
-  var i, j, tmp;
-  for (i = a.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1));
-    tmp = a[i]; a[i] = a[j]; a[j] = tmp;
-  }
-  queue = a;
-}
-
 function replaceNext() {
-  if (queue.length === 0) shuffleQueue();
-  var which = queue.shift();
-  if (which === 0) {
-    curS = S_LIST[rand(S_LIST)];
-    document.getElementById('hs').textContent = curS + ' ';
-  } else if (which === 1) {
-    curV = V_LIST[rand(V_LIST)];
-    document.getElementById('hv').textContent = curV + ' ';
+  if (step === 0) {
+    document.getElementById('hs').textContent = S_LIST[rand(S_LIST)] + ' ';
+  } else if (step === 1) {
+    document.getElementById('hv').textContent = V_LIST[rand(V_LIST)] + ' ';
   } else {
-    curO = O_LIST[rand(O_LIST)];
-    document.getElementById('ho').textContent = curO;
+    document.getElementById('ho').textContent = O_LIST[rand(O_LIST)];
   }
+  step = (step + 1) % 3;
 }
 
 function initHeader() {
-  curS = S_LIST[rand(S_LIST)];
-  curV = V_LIST[rand(V_LIST)];
-  curO = O_LIST[rand(O_LIST)];
-  document.getElementById('hs').textContent = curS + ' ';
-  document.getElementById('hv').textContent = curV + ' ';
-  document.getElementById('ho').textContent = curO;
-  shuffleQueue();
+  document.getElementById('hs').textContent = S_LIST[rand(S_LIST)] + ' ';
+  document.getElementById('hv').textContent = V_LIST[rand(V_LIST)] + ' ';
+  document.getElementById('ho').textContent = O_LIST[rand(O_LIST)];
+  step = 0;
 }
 
 function pickColor() {
@@ -210,3 +195,6 @@ requestAnimationFrame(frame);
 </script>
 </body>
 </html>
+
+
+S→V→O 순서 고정, 3초마다 하나씩 교체, 9초에 한 바퀴예요.​​​​​​​​​​​​​​​​
