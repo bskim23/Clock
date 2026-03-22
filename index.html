@@ -13,7 +13,21 @@ body {
   display:-webkit-flex; display:flex;
   -webkit-align-items:center; align-items:center;
   -webkit-justify-content:center; justify-content:center;
+  -webkit-flex-direction:column; flex-direction:column;
 }
+#header {
+  width:100%;
+  text-align:center;
+  font-family:Courier,monospace;
+  font-size:3vw;
+  letter-spacing:2px;
+  padding:10px 0 6px;
+  min-height:5vw;
+  white-space:nowrap;
+}
+#hs { color:#a29bfe; }
+#hv { color:#0be881; }
+#ho { color:#ff9f43; }
 #wrap {
   display:-webkit-flex; display:flex;
   -webkit-align-items:center; align-items:center;
@@ -39,6 +53,9 @@ body {
 </style>
 </head>
 <body>
+<div id="header">
+  <span id="hs"></span><span id="hv"></span><span id="ho"></span>
+</div>
 <div id="wrap">
   <div id="time"><span id="hh">00</span><span id="colon">:</span><span id="mm">00</span></div>
   <div id="date"></div>
@@ -58,38 +75,97 @@ var SYMS = [
   '∞','≈','≠','±','×','÷','∑','√','∂','∆',
   'Ω','μ','π','Φ','Ψ','λ','ξ','η','θ','ε'
 ];
+var S_LIST = [
+  'My dog','My cat','My boss','My friend','The teacher',
+  'My mother','The doctor','My sister','The baby','My neighbor',
+  'The chef','My brother','The student','My father','The kid',
+  'My enemy','My government','My AI','My client','My rival',
+  'The thief','The president'
+];
+var V_LIST = [
+  'loves','hates','needs','wants','finds',
+  'makes','takes','breaks','holds','carries',
+  'builds','uses','leaves','brings','keeps',
+  'kills','strikes','eats','dumps','hugs'
+];
+var O_LIST = [
+  'a book','a phone','a key','a bag','a chair',
+  'a cup','a knife','a ball','a box','a bike',
+  'a door','a pen','a coat','a hat','a lamp',
+  'a map','a note','a plate','a ring','a shoe',
+  'a spoon','a ticket','a towel','a watch','a bottle',
+  'a card','a fork','a glass','an umbrella','an apple',
+  'freedom','welfare','rights','victory','hatred',
+  'growth','ideology'
+];
+
 var lastColorIdx = -1;
 var lastColonColorIdx = -1;
 var lastSymIdx = -1;
 var lastMinute = -1;
 
+// 헤더 상태
+var curS = ''; var curV = ''; var curO = '';
+var queue = []; // 교체 순서 큐
+
+function rand(arr) { return Math.floor(Math.random() * arr.length); }
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+// 0,1,2 를 랜덤 순서로 섞기
+function shuffleQueue() {
+  var a = [0, 1, 2];
+  var i, j, tmp;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  queue = a;
+}
+
+function replaceNext() {
+  if (queue.length === 0) shuffleQueue();
+  var which = queue.shift();
+  if (which === 0) {
+    curS = S_LIST[rand(S_LIST)];
+    document.getElementById('hs').textContent = curS + ' ';
+  } else if (which === 1) {
+    curV = V_LIST[rand(V_LIST)];
+    document.getElementById('hv').textContent = curV + ' ';
+  } else {
+    curO = O_LIST[rand(O_LIST)];
+    document.getElementById('ho').textContent = curO;
+  }
+}
+
+function initHeader() {
+  curS = S_LIST[rand(S_LIST)];
+  curV = V_LIST[rand(V_LIST)];
+  curO = O_LIST[rand(O_LIST)];
+  document.getElementById('hs').textContent = curS + ' ';
+  document.getElementById('hv').textContent = curV + ' ';
+  document.getElementById('ho').textContent = curO;
+  shuffleQueue();
+}
 
 function pickColor() {
   var idx;
-  do { idx = Math.floor(Math.random() * COLORS.length); }
-  while (idx === lastColorIdx);
+  do { idx = rand(COLORS); } while (idx === lastColorIdx);
   lastColorIdx = idx;
   return COLORS[idx];
 }
-
 function applyColor(c) {
   document.getElementById('time').style.color = c;
   document.getElementById('date').style.color = c;
 }
-
 function pickColonColor() {
   var idx;
-  do { idx = Math.floor(Math.random() * COLORS.length); }
-  while (idx === lastColonColorIdx || idx === lastColorIdx);
+  do { idx = rand(COLORS); } while (idx === lastColonColorIdx || idx === lastColorIdx);
   lastColonColorIdx = idx;
   return COLORS[idx];
 }
-
 function tickSym() {
   var idx;
-  do { idx = Math.floor(Math.random() * SYMS.length); }
-  while (idx === lastSymIdx);
+  do { idx = rand(SYMS); } while (idx === lastSymIdx);
   lastSymIdx = idx;
   var colon = document.getElementById('colon');
   colon.textContent = SYMS[idx];
@@ -113,7 +189,7 @@ function tick() {
 function initWrap() {
   var wrap = document.getElementById('wrap');
   wrap.style.width  = window.innerWidth  + 'px';
-  wrap.style.height = window.innerHeight + 'px';
+  wrap.style.height = (window.innerHeight - document.getElementById('header').offsetHeight) + 'px';
 }
 
 function frame() {
@@ -126,11 +202,13 @@ function frame() {
 }
 
 initWrap();
+initHeader();
 applyColor(pickColor());
 tickSym();
 tick();
 setInterval(tick, 1000);
 setInterval(tickSym, 1000);
+setInterval(replaceNext, 10000); // 10초마다 S/V/O 중 하나 랜덤 교체
 requestAnimationFrame(frame);
 </script>
 </body>
