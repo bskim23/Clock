@@ -59,6 +59,7 @@ var SYMS = [
   'Ω','μ','π','Φ','Ψ','λ','ξ','η','θ','ε'
 ];
 var lastColorIdx = -1;
+var lastColonColorIdx = -1;
 var lastSymIdx = -1;
 var lastMinute = -1;
 
@@ -77,12 +78,22 @@ function applyColor(c) {
   document.getElementById('date').style.color = c;
 }
 
+function pickColonColor() {
+  var idx;
+  do { idx = Math.floor(Math.random() * COLORS.length); }
+  while (idx === lastColonColorIdx || idx === lastColorIdx);
+  lastColonColorIdx = idx;
+  return COLORS[idx];
+}
+
 function tickSym() {
   var idx;
   do { idx = Math.floor(Math.random() * SYMS.length); }
   while (idx === lastSymIdx);
   lastSymIdx = idx;
-  document.getElementById('colon').textContent = SYMS[idx];
+  var colon = document.getElementById('colon');
+  colon.textContent = SYMS[idx];
+  colon.style.color = pickColonColor();
 }
 
 function tick() {
