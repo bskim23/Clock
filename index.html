@@ -19,15 +19,22 @@ body {
   width:100%;
   text-align:center;
   font-family:Courier,monospace;
-  font-size:3vw;
   letter-spacing:2px;
-  padding:20px 0 6px;
-  min-height:5vw;
+  padding:20px 0 10px;
   white-space:nowrap;
+  flex-shrink:0;
 }
-#hs { color:#fff; }
-#hv { color:#fff; }
-#ho { color:#fff; }
+#sentence { font-size:3vw; color:#fff; margin-bottom:8px; }
+#rome { font-size:2.5vw; color:#fff; letter-spacing:3px; padding-bottom:8px; }
+#divider { width:100%; height:1px; background:#1a1a1a; flex-shrink:0; }
+#stage {
+  flex:1;
+  display:-webkit-flex; display:flex;
+  -webkit-align-items:center; align-items:center;
+  -webkit-justify-content:center; justify-content:center;
+  width:100%;
+  overflow:hidden;
+}
 #wrap {
   display:-webkit-flex; display:flex;
   -webkit-align-items:center; align-items:center;
@@ -46,6 +53,7 @@ body {
 #date {
   font-family:Courier,monospace;
   font-size:3.5vw;
+  color:#444;
   margin-top:8px;
   letter-spacing:2px;
   white-space:nowrap;
@@ -54,171 +62,112 @@ body {
 </head>
 <body>
 <div id="header">
-  <span id="hs"></span><span id="hv"></span><span id="ho"></span>
+  <div id="sentence">
+    <span id="hs"></span><span id="hv"></span><span id="ho"></span>
+  </div>
+  <div id="rome">
+    <span style="color:#fff;">ROME</span>
+    <span style="color:#333;"> · </span>
+    <span id="rome-ampm" style="color:#fff;"></span>
+    <span style="color:#333;"> </span>
+    <span id="rome-time" style="color:#fff;"></span>
+  </div>
 </div>
-<div id="wrap">
-  <div id="time"><span id="hh">00</span><span id="colon">:</span><span id="mm">00</span></div>
-  <div id="date"></div>
+<div id="divider"></div>
+<div id="stage">
+  <div id="wrap">
+    <div id="time"><span id="hh">00</span><span id="colon">:</span><span id="mm">00</span></div>
+    <div id="date"></div>
+  </div>
 </div>
 <script>
-var DAYS = ['일','월','화','수','목','금','토'];
-var COLORS = [
-  '#ffffff','#aaaaaa','#ff6b6b','#ff9f43',
-  '#ffd32a','#0be881','#67e5ad','#48dbfb',
-  '#54a0ff','#a29bfe','#fd79a8','#fab1d3'
-];
-var SYMS = [
-  '!','@','#','$','%','^','&','*','?','~',
-  '+','-','=','|','/','\\','<','>','[',']',
-  '{','}','(',')','_','§','¶','†','‡','•',
-  '★','☆','♠','♣','♥','♦','©','®','™','✓',
-  '∞','≈','≠','±','×','÷','∑','√','∂','∆',
-  'Ω','μ','π','Φ','Ψ','λ','ξ','η','θ','ε'
-];
-var S_LIST = [
-  'My dog','My cat','My boss','My friend','The teacher',
-  'My mother','The doctor','My sister','The baby','My neighbor',
-  'The chef','My brother','The student','My father','The kid',
-  'My enemy','My government','My AI','My client','My rival',
-  'The thief','The president','My wife','My husband','My son',
-  'My daughter','The lawyer','The soldier','The nurse','The pilot',
-  'My landlord','The judge','My banker','The priest','The officer',
-  'My coach','The artist','My dealer','The reporter','My therapist',
-  'The janitor','My driver','The guard','The farmer','My manager',
-  'The engineer','My partner','The scientist','The actor','My secretary',
-  'The musician','The poet','The king','The queen','The robot',
-  'My shadow','The ghost','My conscience','The monster','My clone',
-  'The stranger','My stalker','The spy','My accountant','The beggar',
-  'My servant','The villain','My hero','The zombie','The dictator',
-  'My psychiatrist','The assassin','My butler','The hacker','My investor',
-  'The prophet','My advisor','The detective','The rebel','My senator',
-  'The surgeon','My agent','The captain','My intern','The librarian',
-  'My plumber','The firefighter','My dentist','The barber','The mechanic',
-  'My editor','The warden','My broker','The ambassador','My bodyguard',
-  'My critic','The preacher','My ancestor','The witness','The philosopher'
-];
-var V_LIST = [
-  'loves','hates','needs','wants','finds',
-  'makes','takes','breaks','holds','carries',
-  'builds','uses','leaves','brings','keeps',
-  'kills','strikes','eats','dumps','hugs',
-  'chases','ignores','destroys','steals','swallows',
-  'buries','punches','haunts','stalks','owns',
-  'feeds','sells','buys','burns','cuts',
-  'drops','fixes','grabs','hides','hits',
-  'kicks','lifts','loses','misses','opens',
-  'picks','pulls','pushes','reads','rents',
-  'rides','saves','sends','shakes','shows',
-  'skips','smells','throws','ties','touches',
-  'traps','treats','trusts','washes','watches',
-  'wraps','writes','bites','blocks','calls',
-  'catches','checks','cleans','collects','controls',
-  'covers','damages','defends','denies','drives',
-  'escapes','follows','forgets','guards','hunts',
-  'invades','joins','judges','knows','manages',
-  'marks','nurses','orders','protects','questions',
-  'raises','rejects','replaces','reports','rules',
-  'searches','serves','shapes','shares','shelters',
-  'shoots','silences','survives','trains','worships'
-];
-var O_LIST = [
-  'a book','a phone','a key','a bag','a chair',
-  'a cup','a knife','a ball','a box','a bike',
-  'a door','a pen','a coat','a hat','a lamp',
-  'a map','a note','a plate','a ring','a shoe',
-  'a spoon','a ticket','a towel','a watch','a bottle',
-  'a card','a fork','a glass','an umbrella','an apple',
-  'freedom','welfare','rights','victory','hatred',
-  'growth','ideology','a gun','a flag','a clock',
-  'a mirror','a camera','a letter','a coin','a rope',
-  'a stone','a needle','a flower','a mask','a crown',
-  'a sword','a bomb','a pill','a wire','a badge',
-  'a hammer','a chain','a lock','a wall','a bridge',
-  'a secret','a lie','a dream','a memory','a soul',
-  'a heart','power','money','truth','justice',
-  'beauty','silence','violence','hunger','pleasure',
-  'pain','fear','hope','anger','love',
-  'death','life','time','chaos','order',
-  'faith','doubt','shame','pride','guilt',
-  'peace','war','knowledge','darkness','light',
-  'a wound','a laugh','a tear','a name','a voice',
-  'a scar','a debt','a promise','a grave','a throne'
-];
+var DAYS=['일','월','화','수','목','금','토'];
+var COLORS=['#ffffff','#aaaaaa','#ff6b6b','#ff9f43','#ffd32a','#0be881','#67e5ad','#48dbfb','#54a0ff','#a29bfe','#fd79a8','#fab1d3'];
+var SYMS=['!','@','#','$','%','^','&','*','?','~','+','-','=','|','/','\\','<','>','[',']','{','}','(',')','_','§','¶','†','‡','•','★','☆','♠','♣','♥','♦','©','®','™','✓','∞','≈','≠','±','×','÷','∑','√','∂','∆','Ω','μ','π','Φ','Ψ','λ','ξ','η','θ','ε'];
+var S_LIST=['My dog','My cat','My boss','My friend','The teacher','My mother','The doctor','My sister','The baby','My neighbor','The chef','My brother','The student','My father','The kid','My enemy','My government','My AI','My client','My rival','The thief','The president','My wife','My husband','My son','My daughter','The lawyer','The soldier','The nurse','The pilot','My landlord','The judge','My banker','The priest','The officer','My coach','The artist','My dealer','The reporter','My therapist','The janitor','My driver','The guard','The farmer','My manager','The engineer','My partner','The scientist','The actor','My secretary','The musician','The poet','The king','The queen','The robot','My shadow','The ghost','My conscience','The monster','My clone','The stranger','My stalker','The spy','My accountant','The beggar','My servant','The villain','My hero','The zombie','The dictator','My psychiatrist','The assassin','My butler','The hacker','My investor','The prophet','My advisor','The detective','The rebel','My senator','The surgeon','My agent','The captain','My intern','The librarian','My plumber','The firefighter','My dentist','The barber','The mechanic','My editor','The warden','My broker','The ambassador','My bodyguard','My critic','The preacher','My ancestor','The witness','The philosopher'];
+var V_LIST=['loves','hates','needs','wants','finds','makes','takes','breaks','holds','carries','builds','uses','leaves','brings','keeps','kills','strikes','eats','dumps','hugs','chases','ignores','destroys','steals','swallows','buries','punches','haunts','stalks','owns','feeds','sells','buys','burns','cuts','drops','fixes','grabs','hides','hits','kicks','lifts','loses','misses','opens','picks','pulls','pushes','reads','rents','rides','saves','sends','shakes','shows','skips','smells','throws','ties','touches','traps','treats','trusts','washes','watches','wraps','writes','bites','blocks','calls','catches','checks','cleans','collects','controls','covers','damages','defends','denies','drives','escapes','follows','forgets','guards','hunts','invades','joins','judges','knows','manages','marks','nurses','orders','protects','questions','raises','rejects','replaces','reports','rules','searches','serves','shapes','shares','shelters','shoots','silences','survives','trains','worships'];
+var O_LIST=['a book','a phone','a key','a bag','a chair','a cup','a knife','a ball','a box','a bike','a door','a pen','a coat','a hat','a lamp','a map','a note','a plate','a ring','a shoe','a spoon','a ticket','a towel','a watch','a bottle','a card','a fork','a glass','an umbrella','an apple','freedom','welfare','rights','victory','hatred','growth','ideology','a gun','a flag','a clock','a mirror','a camera','a letter','a coin','a rope','a stone','a needle','a flower','a mask','a crown','a sword','a bomb','a pill','a wire','a badge','a hammer','a chain','a lock','a wall','a bridge','a secret','a lie','a dream','a memory','a soul','a heart','power','money','truth','justice','beauty','silence','violence','hunger','pleasure','pain','fear','hope','anger','love','death','life','time','chaos','order','faith','doubt','shame','pride','guilt','peace','war','knowledge','darkness','light','a wound','a laugh','a tear','a name','a voice','a scar','a debt','a promise','a grave','a throne'];
 
-var lastColorIdx = -1;
-var lastColonColorIdx = -1;
-var lastSymIdx = -1;
-var lastMinute = -1;
+var lastColorIdx=-1,lastColonColorIdx=-1,lastSymIdx=-1,lastMinute=-1;
 
-function rand(arr) { return Math.floor(Math.random() * arr.length); }
-function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function rand(arr){return Math.floor(Math.random()*arr.length);}
+function pad(n){return n<10?'0'+n:''+n;}
 
-function refreshHeader() {
-  document.getElementById('hs').textContent = S_LIST[rand(S_LIST)] + ' ';
-  document.getElementById('hv').textContent = V_LIST[rand(V_LIST)] + ' ';
-  document.getElementById('ho').textContent = O_LIST[rand(O_LIST)];
-}
-
-function pickColor() {
-  var idx;
-  do { idx = rand(COLORS); } while (idx === lastColorIdx);
-  lastColorIdx = idx;
-  return COLORS[idx];
-}
-function applyColor(c) {
-  document.getElementById('time').style.color = c;
-  document.getElementById('date').style.color = c;
-}
-function pickColonColor() {
-  var idx;
-  do { idx = rand(COLORS); } while (idx === lastColonColorIdx || idx === lastColorIdx);
-  lastColonColorIdx = idx;
-  return COLORS[idx];
-}
-function tickSym() {
-  var idx;
-  do { idx = rand(SYMS); } while (idx === lastSymIdx);
-  lastSymIdx = idx;
-  var colon = document.getElementById('colon');
-  colon.textContent = SYMS[idx];
-  colon.style.color = pickColonColor();
-}
-
-function tick() {
-  var t = new Date();
-  var m = t.getMinutes();
-  document.getElementById('hh').textContent = pad(t.getHours());
-  document.getElementById('mm').textContent = pad(m);
-  document.getElementById('date').textContent =
-    t.getFullYear() + '년 ' + (t.getMonth() + 1) + '월 ' +
-    t.getDate() + '일 (' + DAYS[t.getDay()] + ')';
-  if (m !== lastMinute) {
-    lastMinute = m;
-    applyColor(pickColor());
+function getRomeTime(){
+  try{
+    var now=new Date();
+    var parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Rome',hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true}).formatToParts(now);
+    var h='',mi='',s='',ampm='';
+    for(var i=0;i<parts.length;i++){
+      if(parts[i].type==='hour')h=parts[i].value;
+      if(parts[i].type==='minute')mi=parts[i].value;
+      if(parts[i].type==='second')s=parts[i].value;
+      if(parts[i].type==='dayPeriod')ampm=parts[i].value.toUpperCase();
+    }
+    return {ampm:ampm,time:pad(parseInt(h,10))+':'+mi+':'+s};
+  }catch(e){
+    var now=new Date();
+    var utc=now.getTime()+now.getTimezoneOffset()*60000;
+    var rome=new Date(utc+3600000);
+    var rh=rome.getHours();
+    var ampm=rh>=12?'PM':'AM';
+    var h12=rh%12;if(h12===0)h12=12;
+    return {ampm:ampm,time:pad(h12)+':'+pad(rome.getMinutes())+':'+pad(rome.getSeconds())};
   }
+}
+
+function pickColor(){
+  var idx;
+  do{idx=rand(COLORS);}while(idx===lastColorIdx);
+  lastColorIdx=idx;return COLORS[idx];
+}
+function applyColor(c){
+  document.getElementById('time').style.color=c;
+  document.getElementById('date').style.color=c;
+}
+function pickColonColor(){
+  var idx;
+  do{idx=rand(COLORS);}while(idx===lastColonColorIdx||idx===lastColorIdx);
+  lastColonColorIdx=idx;return COLORS[idx];
+}
+function tickSym(){
+  var idx;
+  do{idx=rand(SYMS);}while(idx===lastSymIdx);
+  lastSymIdx=idx;
+  var c=document.getElementById('colon');
+  c.textContent=SYMS[idx];
+  c.style.color=pickColonColor();
+}
+function refreshHeader(){
+  document.getElementById('hs').textContent=S_LIST[rand(S_LIST)]+' ';
+  document.getElementById('hv').textContent=V_LIST[rand(V_LIST)]+' ';
+  document.getElementById('ho').textContent=O_LIST[rand(O_LIST)];
+}
+function tick(){
+  var t=new Date();
+  var h=t.getHours(),m=t.getMinutes();
+  document.getElementById('hh').textContent=pad(h);
+  document.getElementById('mm').textContent=pad(m);
+  document.getElementById('date').textContent=t.getFullYear()+'년 '+(t.getMonth()+1)+'월 '+t.getDate()+'일 ('+DAYS[t.getDay()]+')';
+  var rt=getRomeTime();
+  document.getElementById('rome-ampm').textContent=rt.ampm;
+  document.getElementById('rome-time').textContent=rt.time;
+  if(m!==lastMinute){lastMinute=m;applyColor(pickColor());}
   tickSym();
-  refreshHeader();
 }
-
-function initWrap() {
-  var wrap = document.getElementById('wrap');
-  wrap.style.width  = window.innerWidth  + 'px';
-  wrap.style.height = (window.innerHeight - document.getElementById('header').offsetHeight) + 'px';
-}
-
-function frame() {
-  var t = new Date();
-  var sec = t.getSeconds() + t.getMilliseconds() / 1000;
-  var wrap = document.getElementById('wrap');
-  wrap.style.webkitTransform = 'rotate(' + (sec * 6) + 'deg)';
-  wrap.style.transform       = 'rotate(' + (sec * 6) + 'deg)';
+function frame(){
+  var t=new Date();
+  var sec=t.getSeconds()+t.getMilliseconds()/1000;
+  var wrap=document.getElementById('wrap');
+  wrap.style.webkitTransform='rotate('+(sec*6)+'deg)';
+  wrap.style.transform='rotate('+(sec*6)+'deg)';
   requestAnimationFrame(frame);
 }
-
-initWrap();
 applyColor(pickColor());
+refreshHeader();
 tick();
-setInterval(tick, 2000);
+setInterval(tick,1000);
+setInterval(refreshHeader,2500);
 requestAnimationFrame(frame);
 </script>
 </body>
